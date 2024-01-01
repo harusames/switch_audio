@@ -1,43 +1,25 @@
 package syn.harusame.switch_audio
 
+import android.media.AudioManager
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import syn.harusame.switch_audio.ui.theme.SwitchAudioTheme
+import android.widget.Switch
+import androidx.appcompat.app.AppCompatActivity
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
+    // create an android kotlin app that switches between the phone and speaker audio and also adds a Quick Settings tile for it
+    // MAYBE: and make sure the value in the app is updated if modified from quick settings and vice-versa (ex: using SharedPreferences)
+    private lateinit var audioManager: AudioManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            SwitchAudioTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Greeting("Android")
-                }
-            }
+        setContentView(R.layout.activity_main)
+
+        audioManager = getSystemService(AudioManager::class.java)
+
+        val speakerSwitch = findViewById<Switch>(R.id.speakerSwitch)
+        speakerSwitch.isChecked = MyAudioManager.getIsSpeakerOn(audioManager)
+        speakerSwitch.setOnCheckedChangeListener { _, isChecked ->
+            MyAudioManager.setIsSpeakerOn(audioManager, isChecked)
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-            text = "Hello $name!",
-            modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    SwitchAudioTheme {
-        Greeting("Android")
     }
 }
